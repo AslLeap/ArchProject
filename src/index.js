@@ -50,8 +50,8 @@ HelloWorld.prototype.eventHandlers.onSessionStarted = function (sessionStartedRe
 
 HelloWorld.prototype.eventHandlers.onLaunch = function (launchRequest, session, response) {
     console.log("HelloWorld onLaunch requestId: " + launchRequest.requestId + ", sessionId: " + session.sessionId);
-    var speechOutput = "Welcome, i can suck your dick";
-    var repromptText = "You can say hello";
+    var speechOutput = "Welcome, I can check your appointments or remind you about your medications";
+    var repromptText = "Do you want me to tell you your appointments for the day?";
     response.ask(speechOutput, repromptText);
 };
 
@@ -63,13 +63,39 @@ HelloWorld.prototype.eventHandlers.onSessionEnded = function (sessionEndedReques
 
 HelloWorld.prototype.intentHandlers = {
     // register custom intent handlers
-    "HelloWorldIntent": function (intent, session, response) {
-        response.tellWithCard("Hello World!", "Hello World", "Hello World!");
-    },
     "AMAZON.HelpIntent": function (intent, session, response) {
-        response.ask("You can say hello to me!", "You can say hello to me!");
+        response.ask("I am a bad bitch! touch me in my charging port you big boi", "Oh yeaaaaa that feels good!");
+    },
+    "MedicationIntent": function(intent, session, response) {
+        response.ask("Which medication are we talking about?", "Is it " + medications(meds));
+       // HelloWorld;
+    },
+    "DoctorIntent": function(intent, session, response) {
+        console.log(response.shouldEndSession);
+        response.askWithCard("Your next appointment is on the 22nd", "YAW", "live", 'doctor');
+    },
+    "Pills": function(intent, session, response) {
+        response.tellWithCard("smoke that shit, BITCH");
     }
+
 };
+var meds =[
+
+        "weed",
+        "cocaine",
+        "pot",
+        "heroin",
+        "lsd",
+        "advil"
+
+    ]
+
+function medications(meds){
+    str = "";
+    for (var i in meds)
+        str += meds[i] + ", ";
+    return str;
+}
 
 // Create the handler that responds to the Alexa Request.
 exports.handler = function (event, context) {
