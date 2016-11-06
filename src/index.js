@@ -72,83 +72,121 @@ HelloWorld.prototype.intentHandlers = {
        // HelloWorld;
     },
     "DoctorIntent": function(intent, session, response) {
-        console.log(response.shouldEndSession);
-        response.askWithCard("Your next appointment is on the 22nd", "YAW", "live", 'doctor');
+        if(intent.slots.event.value>0 && intent.slots.event.value < appointments.length) {
+            response.ask("Your "+ intent.slots.event.value +" is on " + appointments[intent.slots.event.value] + ". Is there anything else I can do for you?");
+        }
+        else {
+            response.ask("Your closest appointment is on" + appointments[0] + ". Is there anything else i can do for you?");
+        }
     },
     "Pills": function(intent, session, response) {
-        response.tellWithCard("smoke that shit, BITCH");
+        if (meds.contains(intent.slots.pill.value))
+            response.tellWithCard(meds.get(intent.slots.pill.value));
+        else
+            response.ask("I am sorry, I dont have that in my list. Could you tell me how often you have to take that?");
+            pill = intent.slots.pill.value;
+    },
+    "TimesIntent": function(intent, session, response){
+      if(intent.slots.number.value > -1){
+        meds.set(pill, intent.slots.number.value);
+        response.ask("Pill was recorded, is there anything else I can do for you?");
+      }else{
+          response.ask("I am sorry I did not quite get that.");
+      }
     },
     "CreateAppIntent": function(intent, session, response) {
-        p = new Appointment('Billy', "here", response.date, response.Purpose)
-        response.tellWithCard(p.getPurpose());
-    }
-    "CheckIntent": function(intent, session, response) {
-
-    }
+        console.log(intent.slots.date.value);
+        if (intent.slots.date.value) {
+            appointments.push(intent.slots.date.value);
+            appointments = appointments.sort();
+            response.ask("Appointment created for " + intent.slots.date.value+". Is there anything else I can do for you?");
+        }else{
+            response.ask("I am sorry, I did not get what you said. Could you repeat that?");
+        }
+        //p = new Appointment('Billy', "here", response.date, response.Purpose)
+        //response.tellWithCard(p.getPurpose());
+    },
+     "AMAZON.YesIntent": function(intent, session, response) {
+        response.ask("What can I do for you?", "You can ask for anything");
+     },
+     "AMAZON.NoIntent": function(intent, session, response){
+        response.tellWithCard("Thank you");
+     }
 
 };
-var meds =[
+// var meds =[
+//     "Morphine",
+//     "Adderal",
+//     "Advil"
+//     ]
+var pill = "";
+require('javascript.util');
+var meds = new javascript.util.ArrayList;
+meds.set("Morphine", 0);
+meds.set("Adderal", 3);
+meds.set("Advil", 10);
 //Needed to be filled
-    new Medication(docName, "Morphine", bodyPart, dosageSize, monList, tueList, wedList, ThuList, friList, satList, sunList),
-    new Medication(docName, "Adderal", bodyPart, dosageSize, monList, tueList, wedList, ThuList, friList, satList, sunList),
-    new Medication(docName, "Advil", bodyPart, dosageSize, monList, tueList, wedList, ThuList, friList, satList, sunList)
-    ]
+    // new Medication(docName, "Morphine", bodyPart, dosageSize, monList, tueList, wedList, ThuList, friList, satList, sunList),
+    // new Medication(docName, "Adderal", bodyPart, dosageSize, monList, tueList, wedList, ThuList, friList, satList, sunList),
+    // new Medication(docName, "Advil", bodyPart, dosageSize, monList, tueList, wedList, ThuList, friList, satList, sunList)
 
-var appointmentsList = [
+var appointments = []
 
-    new Appointment("Dr. Robert", "Worchester Location", "November 20th at 10 am", "Checkup"),
-    new Appointment("Dr. Phill", "Burlington Location", "December 5th at 11 am ", "Questions for the Doctor"),
-    new Appointment("Dr. Phill", "Burlington Location", "December 5th at 12 pm", "Personal Questions")
+// var appointmentsList = [
 
-]
+//     new Appointment("Dr. Robert", "Worchester Location", "November 20th at 10 am", "Checkup"),
+//     new Appointment("Dr. Phill", "Burlington Location", "December 5th at 11 am ", "Questions for the Doctor"),
+//     new Appointment("Dr. Phill", "Burlington Location", "December 5th at 12 pm", "Personal Questions")
+
+// ]
 
 function medications(meds){
     str = "";
     for (var i in meds)
-        str += meds[i].toString() + ", ";
+        str += meds[i] + ", ";//dont forget to change it to a toString() method
     return str;
 }
 
-function appointments(appointmentsList) {
-    str = "";
-    for(var i in appointmentsList)
-        str += appointmentsList[i].toString() + ", ";
-    return str;
-}
+// function appointments(appointmentsList) {
+//     str = "";
+//     for(var i in appointmentsList)
+//         str += appointmentsList[i].toString() + ", ";
+//     return str;
+// }
 
-function addAppointment(Patient T) {
-    var docName = response.ask("Which doctor is your appointment with");
-    var location = response.ask("Which location is the appointment located?");
-    var time = response.ask("What is the time and Date of the appointment");
-    //Do we need a way to translate the Date into a variable or no?
-    var purpose = response.ask("Why are you taking this appointment");
+// function addAppointment(Patient T) {
+//     var docName = response.ask("Which doctor is your appointment with");
+//     var location = response.ask("Which location is the appointment located?");
+//     var time = response.ask("What is the time and Date of the appointment");
+//     //Do we need a way to translate the Date into a variable or no?
+//     var purpose = response.ask("Why are you taking this appointment");
 
-    newAppoit = new Appointment(docName, location, time, purpose);
-    T.getAppointmentList().push(newAppoit);
-    appointmentsList = T.getAppointmentList();zzzazzzzszzz
-}
+//     newAppoit = new Appointment(docName, location, time, purpose);
+//     T.getAppointmentList().push(newAppoit);
+//     appointmentsList = T.getAppointmentList();
+// }
 
-function addMedication(Patient T) {
-    var docName = response.ask("Which doctor prescribed this medication");
-    var medName = response.ask("What is the name of this medication");
-    var bodyPart = response.ask("What body part does this medication effect", "What would you like to nickname this medication");
-    var dosageSize = response.ask("What is the dosage size");
+// function addMedication(Patient T) {
+//     var docName = response.ask("Which doctor prescribed this medication");
+//     var medName = response.ask("What is the name of this medication");
+//     var bodyPart = response.ask("What body part does this medication effect", "What would you like to nickname this medication");
+//     var dosageSize = response.ask("What is the dosage size");
 
-    //There needs to be a way to parse through what we say so that Alexa can distinguish between the different times.
+//     //There needs to be a way to parse through what we say so that Alexa can distinguish between the different times.
 
-    // this.frequency['Monday']=monList;
-    // this.frequency['Tuesday']=tueList;
-    // this.frequency['Wednesday']=wedList;
-    // this.frequency['Thursday']=thuList;
-    // this.frequency['Friday']=friList;
-    // this.frequency['Saturday']=satList;
-    // this.frequency['Sunday']=sunList;
+//     // this.frequency['Monday']=monList;
+//     // this.frequency['Tuesday']=tueList;
+//     // this.frequency['Wednesday']=wedList;
+//     // this.frequency['Thursday']=thuList;
+//     // this.frequency['Friday']=friList;
+//     // this.frequency['Saturday']=satList;
+//     // this.frequency['Sunday']=sunList;
 
-    var newMed = new Medication(docName, medName, bodyPart, dosageSize, monList, tueList, wedList, ThuList, friList, satList, sunList);
-    meds.push(newMed);
-    T.addMedication(newMed);
+//     var newMed = new Medication(docName, medName, bodyPart, dosageSize, monList, tueList, wedList, ThuList, friList, satList, sunList);
+//     meds.push(newMed);
+//     T.addMedication(newMed);
 
-}
+//}
 // Create the handler that responds to the Alexa Request.
 exports.handler = function (event, context) {
     // Create an instance of the HelloWorld skill.
