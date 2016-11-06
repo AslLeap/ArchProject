@@ -1,4 +1,5 @@
 /**
+/**
     Copyright 2014-2015 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance with the License. A copy of the License is located at
@@ -76,6 +77,13 @@ HelloWorld.prototype.intentHandlers = {
     },
     "Pills": function(intent, session, response) {
         response.tellWithCard("smoke that shit, BITCH");
+    },
+    "CreateAppIntent": function(intent, session, response) {
+        p = new Appointment('Billy', "here", response.date, response.Purpose)
+        response.tellWithCard(p.getPurpose());
+    }
+    "CheckIntent": function(intent, session, response) {
+
     }
 
 };
@@ -87,8 +95,15 @@ var meds =[
         "heroin",
         "lsd",
         "advil"
-
     ]
+
+var appointmentsList = [
+
+    new Appointment("Dr. Robert", "Worchester Location", "November 20th at 10 am", "Checkup"),
+    new Appointment("Dr. Phill", "Burlington Location", "December 5th at 11 am ", "Questions for the Doctor"),
+    new Appointment("Dr. Phill", "Burlington Location", "December 5th at 12 pm", "Personal Questions")
+
+]
 
 function medications(meds){
     str = "";
@@ -97,6 +112,46 @@ function medications(meds){
     return str;
 }
 
+function appointments(appointmentsList) {
+    str = "";
+    for(var i in appointmentsList)
+        str += appointmentsList[i].toString() + ", ";
+    return str;
+}
+
+function addAppointment(Patient T) {
+    var docName = response.ask("Which doctor is your appointment with");
+    var location = response.ask("Which location is the appointment located?");
+    var time = response.ask("What is the time and Date of the appointment");
+    //Do we need a way to translate the Date into a variable or no?
+    var purpose = response.ask("Why are you taking this appointment");
+
+    newAppoit = new Appointment(docName, location, time, purpose);
+    T.getAppointmentList().push(newAppoit);
+    appointmentsList = T.getAppointmentList();zzzazzzzszzz
+}
+
+function addMedication(Patient T) {
+    var docName = response.ask("Which doctor prescribed this medication");
+    var medName = response.ask("What is the name of this medication");
+    var bodyPart = response.ask("What body part does this medication effect", "What would you like to nickname this medication");
+    var dosageSize = response.ask("What is the dosage size");
+
+    //There needs to be a way to parse through what we say so that Alexa can distinguish between the different times.
+
+    // this.frequency['Monday']=monList;
+    // this.frequency['Tuesday']=tueList;
+    // this.frequency['Wednesday']=wedList;
+    // this.frequency['Thursday']=thuList;
+    // this.frequency['Friday']=friList;
+    // this.frequency['Saturday']=satList;
+    // this.frequency['Sunday']=sunList;
+
+    var newMed = new Medication(docName, medName, bodyPart, dosageSize, monList, tueList, wedList, ThuList, friList, satList, sunList);
+    meds.push(newMed);
+    T.addMedication(newMed);
+
+}
 // Create the handler that responds to the Alexa Request.
 exports.handler = function (event, context) {
     // Create an instance of the HelloWorld skill.
