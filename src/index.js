@@ -65,31 +65,34 @@ HelloWorld.prototype.eventHandlers.onSessionEnded = function (sessionEndedReques
 HelloWorld.prototype.intentHandlers = {
     // register custom intent handlers
     "AMAZON.HelpIntent": function (intent, session, response) {
-        response.ask("I am a bad bitch! touch me in my charging port you big boi", "Oh yeaaaaa that feels good!");
+        response.ask("Please refer to the intruction manual for help.");
     },
     "MedicationIntent": function(intent, session, response) {
-        response.ask("Which medication are we talking about?", "Is it " + medications(meds));
+        response.ask("Which medication are we talking about?" + (medicals.length===0 ? medications(medicals): "Will that be " +medications(medicals)), "Is it " + medications(medicals));
        // HelloWorld;
     },
     "DoctorIntent": function(intent, session, response) {
-        if(intent.slots.event.value>0 && intent.slots.event.value < appointments.length) {
+        if(intent.slots.event.value-1>-1 && intent.slots.event.value-1 < appointments.length) {
             response.ask("Your "+ intent.slots.event.value +" is on " + appointments[intent.slots.event.value] + ". Is there anything else I can do for you?");
         }
-        else {
+        else if(appointments.length === 0) {
+            response.ask("You do not have any scheduled appointments");
+        } else {
             response.ask("Your closest appointment is on" + appointments[0] + ". Is there anything else i can do for you?");
         }
     },
     "Pills": function(intent, session, response) {
-        if (meds.contains(intent.slots.pill.value))
-            response.tellWithCard(meds.get(intent.slots.pill.value));
+        if (meds.get(intent.slots.pill.value) !==null)
+            response.tellWithCard("You have to take" + intent.slots.pill.value +" "+ meds.get(intent.slots.pill.value) +" times a day");
         else
             response.ask("I am sorry, I dont have that in my list. Could you tell me how often you have to take that?");
             pill = intent.slots.pill.value;
     },
     "TimesIntent": function(intent, session, response){
       if(intent.slots.number.value > -1){
-        meds.set(pill, intent.slots.number.value);
-        response.ask("Pill was recorded, is there anything else I can do for you?");
+        meds.put(pill, intent.slots.number.value);
+        medicals.push(pill);
+        response.ask("Medication was recorded, is there anything else I can do for you?");
       }else{
           response.ask("I am sorry I did not quite get that.");
       }
@@ -121,10 +124,9 @@ HelloWorld.prototype.intentHandlers = {
 //     ]
 var pill = "";
 require('javascript.util');
-var meds = new javascript.util.ArrayList;
-meds.set("Morphine", 0);
-meds.set("Adderal", 3);
-meds.set("Advil", 10);
+var meds = new javascript.util.HashMap;
+var medicals = []
+
 //Needed to be filled
     // new Medication(docName, "Morphine", bodyPart, dosageSize, monList, tueList, wedList, ThuList, friList, satList, sunList),
     // new Medication(docName, "Adderal", bodyPart, dosageSize, monList, tueList, wedList, ThuList, friList, satList, sunList),
@@ -144,6 +146,7 @@ function medications(meds){
     str = "";
     for (var i in meds)
         str += meds[i] + ", ";//dont forget to change it to a toString() method
+    console.log(str);
     return str;
 }
 
