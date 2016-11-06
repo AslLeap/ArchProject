@@ -88,13 +88,10 @@ HelloWorld.prototype.intentHandlers = {
 
 };
 var meds =[
-
-        "weed",
-        "cocaine",
-        "pot",
-        "heroin",
-        "lsd",
-        "advil"
+//Needed to be filled
+    new Medication(docName, "Morphine", bodyPart, dosageSize, monList, tueList, wedList, ThuList, friList, satList, sunList),
+    new Medication(docName, "Adderal", bodyPart, dosageSize, monList, tueList, wedList, ThuList, friList, satList, sunList),
+    new Medication(docName, "Advil", bodyPart, dosageSize, monList, tueList, wedList, ThuList, friList, satList, sunList)
     ]
 
 var appointmentsList = [
@@ -108,7 +105,7 @@ var appointmentsList = [
 function medications(meds){
     str = "";
     for (var i in meds)
-        str += meds[i] + ", ";
+        str += meds[i].toString() + ", ";
     return str;
 }
 
